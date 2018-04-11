@@ -1,6 +1,6 @@
 .DS_Store
-vue2.0_node_mongodb_mall/node_modules/
-vue2.0_node_mongodb_mall/server/node_modules/
+node_modules/
+server/node_modules/
 /dist/
 npm-debug.log*
 yarn-debug.log*
