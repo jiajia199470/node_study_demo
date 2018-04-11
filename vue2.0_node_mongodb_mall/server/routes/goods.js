@@ -31,7 +31,7 @@ mongoose.connection.on("disconnected", function () {
 });
 //查询商品列表数据
 router.get("/list", function (req,res,next) {
-    let page = parseInt(req.param("page"));
+    let page = parseInt(req.param("page"));//获取参数
     let pageSize = parseInt(req.param("pageSize"));
     let priceLevel = req.param("priceLevel");
     let sort = req.param("sort");
@@ -52,9 +52,9 @@ router.get("/list", function (req,res,next) {
             }
         }
     }
-    let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
-    goodsModel.sort({'salePrice':sort});
-    goodsModel.exec(function (err,doc) {
+    let goodsModel = Goods.find(params).skip(skip).limit(pageSize);//skip(n) 跳过n条数据
+    goodsModel.sort({'salePrice':sort});//sort -1是降序 1是升序
+    goodsModel.exec(function (err,doc) {//排序需要用调用exec执行结果，不能再用find
         if(err){
             res.json({
                 status:'1',

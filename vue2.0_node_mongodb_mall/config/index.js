@@ -11,25 +11,24 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        // '/api': {
-        //     target: 'http://hbp9st.natappfree.cc', // 接口的域名
-        //     // secure: false,  // 如果是https接口，需要配置这个参数
-        //     changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
-        //     pathRewrite: {
-        //         '^/api': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
-        //     }
-        // }
+        '/api': {
+            target: 'http://localhost:3000', // 接口的域名
+            // secure: false,  // 如果是https接口，需要配置这个参数
+            changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
+            pathRewrite: {
+                '^/api': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://localhost:3000/goods/addCart'，直接写‘/api/goods/addCart’即可
+            }
+        }
     },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,//自动启动浏览器
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
     /**
      * Source Maps
      */
