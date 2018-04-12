@@ -46,10 +46,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
       before(app){
 
-          var goodsData = require('../mock/goods.json');
-          app.get("/goods",function (req,res,next) {
-              res.json(goodsData);
-          });
+          // var goodsData = require('../mock/goods.json');
+          // app.get("/goods",function (req,res,next) {
+          //     res.json(goodsData);
+          // });//模拟数据
       },
   },
   plugins: [

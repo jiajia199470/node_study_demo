@@ -1,79 +1,98 @@
-<script src="../../../../webpack_sample_project/webpack.config.js"></script>
 <template>
-<div>
-    <nav-header></nav-header>
-    <bread>
-        <span>Goods</span>
-    </bread>
-    <div class="accessory-result-page accessory-page">
-        <div class="container">
-            <div class="filter-nav">
-                <span class="sortby">Sort by:</span>
-                <a href="javascript:void(0)" class="default cur">Default</a>
-                <a href="javascript:void(0)" class="price" @click="sortGoods">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
-                <a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
-            </div>
-            <div class="accessory-result">
-                <!-- filter -->
-                <div class="filter stopPop" id="filter" v-bind:class="{ 'filterby-show':filterBy }">
-                    <dl class="filter-price">
-                        <dt>Price:</dt>
-                        <dd><a href="javascript:void(0)" v-bind:class="{ 'cur' : priceChecked == 'all'}" @click="setPriceFilter('all')">All</a></dd>
-                        <dd v-for="(price,index) in priceFilter">
-                            <a href="javascript:void(0)" @click="setPriceFilter(index)" v-bind:class="{'cur':priceChecked == index }">{{ price.startPrice}} - {{ price.endPrice }}</a>
-                        </dd>
-                    </dl>
+    <div>
+        <nav-header></nav-header>
+        <bread>
+            <span>Goods</span>
+        </bread>
+        <div class="accessory-result-page accessory-page">
+            <div class="container">
+                <div class="filter-nav">
+                    <span class="sortby">Sort by:</span>
+                    <a href="javascript:void(0)" class="default cur">Default</a>
+                    <a href="javascript:void(0)" class="price" @click="sortGoods">Price <img src="../../static/sort-down.svg" class="icon-arrow-short" v-bind:class="{'sort-up':sortFlag}"></a>
+                    <a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
                 </div>
+                <div class="accessory-result">
+                    <!-- filter -->
+                    <div class="filter stopPop" id="filter" v-bind:class="{ 'filterby-show':filterBy }">
+                        <dl class="filter-price">
+                            <dt>Price:</dt>
+                            <dd><a href="javascript:void(0)" v-bind:class="{ 'cur' : priceChecked == 'all'}" @click="setPriceFilter('all')">All</a></dd>
+                            <dd v-for="(price,index) in priceFilter">
+                                <a href="javascript:void(0)" @click="setPriceFilter(index)" v-bind:class="{'cur':priceChecked == index }">{{ price.startPrice}} - {{ price.endPrice }}</a>
+                            </dd>
+                        </dl>
+                    </div>
 
-                <!-- search result accessories list -->
-                <div class="accessory-list-wrap">
-                    <div class="accessory-list col-4">
-                        <ul>
-                            <li v-for="(item,index) in goodsList">
-                                <div class="pic">
-                                    <a href="#"><img v-lazy="'/static/'+item.productImage" alt=""></a>
-                                </div>
-                                <div class="main">
-                                    <div class="name">{{ item.productName }}</div>
-                                    <div class="price">{{ item.salePrice }}</div>
-                                    <div class="btn-area">
-                                        <a href="javascript:;" class="btn btn--m" @click="addCart(item.productId)">加入购物车</a>
+                    <!-- search result accessories list -->
+                    <div class="accessory-list-wrap">
+                        <div class="accessory-list col-4">
+                            <ul>
+                                <li v-for="(item,index) in goodsList">
+                                    <div class="pic">
+                                        <a href="#"><img v-lazy="'/static/'+item.productImage" alt=""></a>
                                     </div>
-                                </div>
-                            </li>
-                            <!--<li>-->
-                                <!--<div class="pic">-->
-                                    <!--<a href="#"><img src="static/2.jpg" alt=""></a>-->
-                                <!--</div>-->
-                                <!--<div class="main">-->
-                                    <!--<div class="name">XX</div>-->
-                                    <!--<div class="price">1000</div>-->
-                                    <!--<div class="btn-area">-->
-                                        <!--<a href="javascript:;" class="btn btn&#45;&#45;m">加入购物车</a>-->
+                                    <div class="main">
+                                        <div class="name">{{ item.productName }}</div>
+                                        <div class="price">{{ item.salePrice }}</div>
+                                        <div class="btn-area">
+                                            <a href="javascript:;" class="btn btn--m btn-m-hover" @click="addCart(item.productId)">加入购物车</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <!--<li>-->
+                                    <!--<div class="pic">-->
+                                        <!--<a href="#"><img src="static/2.jpg" alt=""></a>-->
                                     <!--</div>-->
-                                <!--</div>-->
-                            <!--</li>-->
-                        </ul>
+                                    <!--<div class="main">-->
+                                        <!--<div class="name">XX</div>-->
+                                        <!--<div class="price">1000</div>-->
+                                        <!--<div class="btn-area">-->
+                                            <!--<a href="javascript:;" class="btn btn&#45;&#45;m">加入购物车</a>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                            </ul>
+                        </div>
+
+                        <div class="load-more" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                            <!--<span>加载中...</span>-->
+                            <img src="../assets/loading-spinning-bubbles.svg" v-show="loading">
+                        </div>
                     </div>
 
-                    <div class="load-more" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-                        <!--<span>加载中...</span>-->
-                        <img src="../assets/loading-spinning-bubbles.svg" v-show="loading">
-                    </div>
                 </div>
-
             </div>
         </div>
+        <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+        <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
+            <p slot="message">
+                {{ addCartErrorMsg}} 没能加入购物车
+            </p>
+            <div slot="btnGroup">
+                <a href="javascript:;" class="btn btn--m" @click="closeModal">关闭</a>
+            </div>
+        </modal>
+        <nav-footer></nav-footer>
     </div>
-    <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
-    <nav-footer></nav-footer>
-</div>
 </template>
 <style>
     .load-more{
         height: 100px;
         line-height: 100px;
         text-align: center;
+    }
+
+    .icon-arrow-short{
+        transition: all .3s  ease-out;
+    }
+    .sort-up{
+        transform: rotate(180deg);
+        transition: all .3s  ease-out;
+    }
+
+    .btn-m-hover:hover{
+        background-color: #ff8f94;
     }
 </style>
 <script type="text/ecmascript-6">
@@ -85,6 +104,7 @@
     import NavHeader from '../components/NavHeader.vue'
     import NavFooter from '../components/NavFooter.vue'
     import Bread from '../components/Bread.vue'
+    import Modal from '../components/Modal.vue'
     export default{
         data(){
             return {
@@ -94,6 +114,8 @@
                 pageSize:8,
                 busy:true,//v-infinite-scroll
                 loading:false,
+                mdShow:false,
+                addCartErrorMsg:'',
                 priceFilter:[
                     {
                         startPrice:'0.00',
@@ -115,12 +137,14 @@
                 priceChecked:'all',
                 filterBy:false,
                 overLayFlag:false,
+                noMoreGoodsFlag:false,
             }
         },
         components:{
             NavHeader,
             NavFooter,
-            Bread
+            Bread,
+            Modal
         },
         mounted:function () {
             this.getGoodsList();
@@ -142,17 +166,20 @@
                     var res = response.data;
                     this.loading = false;
                     if(res.status=="0"){
-                        if(flag){
+                        if(flag){//滚动加载更多
                             this.goodsList = this.goodsList.concat(res.result.list);
 
-                            if(res.result.count==0){//没有数据
+                            if( res.result.count==0 ){//没有数据
                                 this.busy = true;
+                                this.noMoreGoodsFlag = true;
                             }else{
                                 this.busy = false;
+                                this.noMoreGoodsFlag = false;
                             }
                         }else{
                             this.goodsList = res.result.list;
                             this.busy = false;
+                            this.noMoreGoodsFlag = false;
                         }
                     }else{
                         this.goodsList = [];
@@ -170,9 +197,11 @@
             setPriceFilter(index){
                 this.priceChecked = index;
                 this.closePop();
-                if(index=='all'){
-                    this.page = 1;
-                }
+//                if(index=='all'){
+//                    this.page = 1;
+//                }
+                this.page = 1;
+
                 this.getGoodsList();
             },
 
@@ -190,21 +219,30 @@
 
             addCart(productId){
                 var url = process.env.API_HOST +'/goods/addCart';
-                this.$http.post(url,{productId:productId}).then((res)=>{
+                this.$http.post(url,{productId:productId}).then((response)=>{
+                    let res = response.data;
                     if(res.status == 0){
-                        alert("加入失败")
+                        alert("加入成功！")
                     }else {
-                        alert("加入成功")
+                        this.mdShow = true;
+                        this.addCartErrorMsg = res.msg;
+//                        alert(`msg:${res.msg}`);
                     }
                 });
             },
             loadMore(){
-                this.busy = true;//滚动加载失效
-                this.page++;
-                setTimeout(() => {
-                    this.getGoodsList(true);
-                    this.busy = false;
-                }, 1000);
+                if(!this.noMoreGoodsFlag){
+                    this.busy = true;//滚动加载失效
+                    this.page++;
+                    setTimeout(() => {
+                        this.getGoodsList(true);
+                        this.busy = false;
+                    }, 1000);
+                }
+            },
+
+            closeModal(){
+                this.mdShow = false;
             }
 
         }
