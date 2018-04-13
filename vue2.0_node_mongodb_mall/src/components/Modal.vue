@@ -34,7 +34,7 @@
         },
         methods:{
             closeModal(){
-                this.$emit("close");
+                this.$emit("close");//通知触发父组件的close事件
             }
         }
     }

@@ -19,7 +19,7 @@ Vue.use(VueLazyload, {
 });
 Vue.use(infiniteScroll);//Vue.use()引用vue-infinite-scroll滚动加载插件
 
-router.push("/goods");//自动跳到goods页面
+// router.push("/goods");//自动跳到goods页面
 
 /* eslint-disable no-new */
 new Vue({

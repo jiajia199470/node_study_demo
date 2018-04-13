@@ -60,6 +60,7 @@ router.post("/logout",function (req,res,next) {
     });
 });
 
+//检查登陆
 router.get("/checkLogin",function (req,res,next) {
     if(req.cookies.userId){
         res.json({
@@ -78,4 +79,26 @@ router.get("/checkLogin",function (req,res,next) {
     }
 });
 
+//查询当前用户的购物车数据
+router.get('/cartList',function (req,res,next) {
+    var userId = req.cookies.userId;
+    User.findOne({userId:userId},function (err,doc) {
+        if(err){
+            res.json({
+                status: "1",
+                msg: err.message
+            });
+        }else {
+            if(doc){
+                res.json({
+                    status: '0',
+                    msg: '',
+                    result: {
+                        cartList: doc.cartList
+                    }
+                })
+            }
+        }
+    });
+});
 module.exports = router;

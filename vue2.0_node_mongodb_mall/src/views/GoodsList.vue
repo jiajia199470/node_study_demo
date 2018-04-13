@@ -1,5 +1,6 @@
 <template>
     <div>
+        <svgIcon></svgIcon>
         <nav-header></nav-header>
         <bread>
             <span>Goods</span>
@@ -9,7 +10,12 @@
                 <div class="filter-nav">
                     <span class="sortby">Sort by:</span>
                     <a href="javascript:void(0)" class="default cur">Default</a>
-                    <a href="javascript:void(0)" class="price" @click="sortGoods">Price <img src="../../static/sort-down.svg" class="icon-arrow-short" v-bind:class="{'sort-up':sortFlag}"></a>
+                    <a href="javascript:void(0)" class="price" @click="sortGoods">
+                        Price
+                        <svg class="icon-arrow-short" v-bind:class="{'sort-up':sortFlag}">
+                            <use xlink:href="#sort-up"></use>
+                        </svg>
+                    </a>
                     <a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
                 </div>
                 <div class="accessory-result">
@@ -57,14 +63,20 @@
 
                         <div class="load-more" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
                             <!--<span>加载中...</span>-->
-                            <img src="../assets/loading-spinning-bubbles.svg" v-show="loading">
+                            <svg v-show="loading" fill="#dd7479" width="64" height="64" >
+                                <use xlink:href="#loading-spinning-bubbles"></use>
+                            </svg>
                         </div>
                     </div>
 
                 </div>
             </div>
         </div>
+
+        <!--弹层-->
         <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+
+        <!--加入购物车失败模态框-->
         <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
             <p slot="message">
                 {{ addCartErrorMsg}} 没能加入购物车
@@ -73,6 +85,23 @@
                 <a href="javascript:;" class="btn btn--m" @click="closeModal">关闭</a>
             </div>
         </modal>
+
+        <!--成功加入购物车模态框-->
+        <modal v-bind:mdShow="mdShowCart" v-on:close="closeModal">
+
+            <p slot="message">
+                <svg class="icon-ok" role="img">
+                    <use xlink:href="#icon-ok"></use>
+                </svg>
+                成功加入购物车！
+            </p>
+
+            <div slot="btnGroup">
+                <a href="javascript:;" class="btn btn--m" @click="closeModal">继续购物</a>
+                <router-link class="btn btn--m" to="/cart" > 查看购物车</router-link>
+            </div>
+        </modal>
+
         <nav-footer></nav-footer>
     </div>
 </template>
@@ -83,6 +112,10 @@
         text-align: center;
     }
 
+    .btn-m-hover:hover{
+        background-color: #ff8f94;
+    }
+
     .icon-arrow-short{
         transition: all .3s  ease-out;
     }
@@ -91,30 +124,25 @@
         transition: all .3s  ease-out;
     }
 
-    .btn-m-hover:hover{
-        background-color: #ff8f94;
-    }
 </style>
 <script type="text/ecmascript-6">
-//    import '@/assets/css/base.css'
-//    import '@/assets/css/checkout.css'
-//    import '@/assets/css/login.css'
-//    import '@/assets/css/product.css'
-
     import NavHeader from '../components/NavHeader.vue'
     import NavFooter from '../components/NavFooter.vue'
     import Bread from '../components/Bread.vue'
     import Modal from '../components/Modal.vue'
+    import svgIcon from  '../components/svgIcon.vue'
+
     export default{
         data(){
             return {
                 goodsList:[],
-                sortFlag:true,
+                sortFlag:false,
                 page:1,
                 pageSize:8,
                 busy:true,//v-infinite-scroll
                 loading:false,
                 mdShow:false,
+                mdShowCart:false,
                 addCartErrorMsg:'',
                 priceFilter:[
                     {
@@ -144,7 +172,8 @@
             NavHeader,
             NavFooter,
             Bread,
-            Modal
+            Modal,
+            svgIcon
         },
         mounted:function () {
             this.getGoodsList();
@@ -222,7 +251,8 @@
                 this.$http.post(url,{productId:productId}).then((response)=>{
                     let res = response.data;
                     if(res.status == 0){
-                        alert("加入成功！")
+//                        alert("加入成功！")
+                        this.mdShowCart = true;
                     }else {
                         this.mdShow = true;
                         this.addCartErrorMsg = res.msg;
@@ -230,6 +260,7 @@
                     }
                 });
             },
+
             loadMore(){
                 if(!this.noMoreGoodsFlag){
                     this.busy = true;//滚动加载失效
@@ -243,6 +274,7 @@
 
             closeModal(){
                 this.mdShow = false;
+                this.mdShowCart = false;
             }
 
         }

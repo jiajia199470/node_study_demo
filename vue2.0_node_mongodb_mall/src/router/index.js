@@ -9,9 +9,13 @@ Vue.use(Router);
 
 
 export default new Router({
-  mode:'history',
+  mode:'history',//不使用hash http://localhost:8081/#/goods
   routes: [
-    {
+      {
+          path: '/',
+          name: 'GoodsList',
+          component:GoodsList
+      },{
       path: '/goods',
       name: 'GoodsList',
       components: {
@@ -33,7 +37,7 @@ export default new Router({
       ]
     },
     {
-        path: '/cart/:cartId',
+        path: '/cart',
         name: "cart",
         component: Cart
     }
